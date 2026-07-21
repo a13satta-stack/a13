@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+:root {
+  --satta-yellow: #ffdd00;
+  --satta-yellow-dark: #f5c400;
+  --satta-red: #d40000;
+}
+
+@theme inline {
+  --color-satta-yellow: var(--satta-yellow);
+  --color-satta-yellow-dark: var(--satta-yellow-dark);
+  --color-satta-red: var(--satta-red);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+html,
+body {
+  background: var(--satta-yellow);
+  color: #111;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Container-relative marquee: `padding-left: 100%` parks the text just past the
+   right edge of its window, then it slides its full width to the left. This
+   keeps the scroll readable at any container width instead of starting far
+   off-screen on narrow (mobile) viewports. */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+.animate-marquee {
+  display: inline-block;
+  white-space: nowrap;
+  padding-left: 100%;
+  animation: marquee 18s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+    padding-left: 0;
+  }
+  .animate-blink {
+    animation: none;
+  }
+}
+
+/* Hard hide/show blink — `step-end` snaps between the two halves with no fade,
+   so the text is fully visible for half the cycle and fully gone for the other
+   half, the way the result boards on these sites flash. `visibility` rides
+   along with `opacity` so screen readers and hit-testing follow the same
+   on/off state instead of reading a permanently-present node. */
+@keyframes blink {
+  0%,
+  50% {
+    opacity: 1;
+    visibility: visible;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+.animate-blink {
+  animation: blink 1s step-end infinite;
+}
+
+/* Admin toasts. */
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-toast-in {
+  animation: toast-in 0.18s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-blink,
+  .animate-marquee,
+  .animate-toast-in {
+    animation: none;
+  }
+}
