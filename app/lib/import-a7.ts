@@ -1,5 +1,6 @@
 import { findGameByName, upsertGame, bulkSetResults, saveSettings, dateKey } from "./db";
 import type { ResultTable } from "./types";
+import { to12h } from "./time";
 
 // ---- Upstream payload shapes ----------------------------------------------
 
@@ -45,16 +46,6 @@ export interface ImportOptions {
 }
 
 // ---- Format helpers --------------------------------------------------------
-
-/** Convert "13:40" (24h) -> "1:40 PM". Pass through anything else unchanged. */
-export function to12h(raw: string): string {
-  const m = /^(\d{1,2}):(\d{2})$/.exec(raw.trim());
-  if (!m) return raw.trim();
-  let h = Number(m[1]);
-  const ap = h >= 12 ? "PM" : "AM";
-  h = h % 12 || 12;
-  return `${h}:${m[2]} ${ap}`;
-}
 
 /** Convert "01-07-2026" (DD-MM-YYYY) -> "2026-07-01". */
 export function toDateKey(raw: string): string | null {
@@ -129,7 +120,15 @@ export async function importA7Payload(
       gamesTouched++;
       return existing.id;
     }
-    const created = await upsertGame({ name: name.trim(), time, active: true, table });
+    // Appended, not prepended: a game upstream just started publishing should
+    // not silently take over the home page's live board.
+    const created = await upsertGame({
+      name: name.trim(),
+      time,
+      active: true,
+      table,
+      placement: "bottom",
+    });
     nameToId.set(key, created.id);
     gamesTouched++;
     return created.id;

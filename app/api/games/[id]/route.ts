@@ -1,7 +1,13 @@
-import { getGameById, upsertGame, deleteGameById } from "../../../lib/db";
+import {
+  getGameById,
+  upsertGame,
+  deleteGameById,
+  DuplicateGameNameError,
+} from "../../../lib/db";
 import {
   json,
   badRequest,
+  conflict,
   notFound,
   ensureApiAuth,
   readJson,
@@ -29,7 +35,13 @@ export async function PATCH(req: Request, ctx: RouteContext<"/api/games/[id]">) 
       : existing.table;
   if (!name) return badRequest("name cannot be empty");
 
-  const game = await upsertGame({ id, name, time, active, table });
+  let game;
+  try {
+    game = await upsertGame({ id, name, time, active, table });
+  } catch (e) {
+    if (e instanceof DuplicateGameNameError) return conflict(e.message);
+    throw e;
+  }
   revalidateSite();
   return json({ game });
 }

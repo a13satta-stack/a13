@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import {
   upsertGame,
+  DuplicateGameNameError,
   deleteGameById,
   moveGame,
   reorderGames,
@@ -38,15 +39,26 @@ function revalidateSite() {
 
 // ---- Games ----------------------------------------------------------------
 
-export async function saveGameAction(formData: FormData): Promise<void> {
+export async function saveGameAction(
+  formData: FormData
+): Promise<void | { error: string }> {
   await requireAuth();
   const id = String(formData.get("id") ?? "").trim();
   const name = String(formData.get("name") ?? "").trim();
   const time = String(formData.get("time") ?? "").trim();
   const active = formData.get("active") === "on";
   const table = String(formData.get("table") ?? "") === "table2" ? "table2" : "table1";
-  if (!name) throw new Error("Game name is required");
-  await upsertGame({ id: id || undefined, name, time, active, table });
+  if (!name) return { error: "Game name is required." };
+  try {
+    await upsertGame({ id: id || undefined, name, time, active, table });
+  } catch (e) {
+    // Returned rather than rethrown so the admin sees which name clashed —
+    // thrown messages are redacted in production.
+    if (e instanceof DuplicateGameNameError) {
+      return { error: `A game named "${name}" already exists.` };
+    }
+    throw e;
+  }
   revalidateSite();
 }
 

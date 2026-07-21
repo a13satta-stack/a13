@@ -1,5 +1,12 @@
-import { getGamesSorted, upsertGame } from "../../lib/db";
-import { json, badRequest, ensureApiAuth, readJson, revalidateSite } from "../../lib/api";
+import { getGamesSorted, upsertGame, DuplicateGameNameError } from "../../lib/db";
+import {
+  json,
+  badRequest,
+  conflict,
+  ensureApiAuth,
+  readJson,
+  revalidateSite,
+} from "../../lib/api";
 
 // GET /api/games — list all games (public)
 export async function GET() {
@@ -18,7 +25,13 @@ export async function POST(req: Request) {
   const table = body.table === "table2" ? "table2" : "table1";
   if (!name) return badRequest("name is required");
 
-  const game = await upsertGame({ name, time, active, table });
+  let game;
+  try {
+    game = await upsertGame({ name, time, active, table });
+  } catch (e) {
+    if (e instanceof DuplicateGameNameError) return conflict(e.message);
+    throw e;
+  }
   revalidateSite();
   return json({ game }, 201);
 }

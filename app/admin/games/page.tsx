@@ -4,6 +4,7 @@ import { getGamesSorted } from "../../lib/db";
 import { saveGameAction } from "../../actions/admin";
 import { cardPad, label, input, btnPrimary, muted } from "../ui";
 import ActionForm from "../ActionForm";
+import TimeField from "../TimeField";
 import GamesTable from "./GamesTable";
 
 export const dynamic = "force-dynamic";
@@ -27,7 +28,7 @@ export default async function GamesPage() {
         </div>
         <div>
           <label className={label}>Time</label>
-          <input name="time" placeholder="e.g. 5:00 AM" className={input} />
+          <TimeField name="time" className={input} ariaLabel="Result time" />
         </div>
         <div>
           <label className={label}>Table</label>

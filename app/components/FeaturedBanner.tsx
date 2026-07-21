@@ -88,7 +88,7 @@ export default function FeaturedBanner({
       {/* Site-name band: black rules top and bottom frame the yellow strip.
           The title blinks via opacity/visibility, so the band keeps its height
           through the hidden half and nothing below it shifts. */}
-      <div className="border-y-4 border-black bg-satta-yellow px-3 py-3 text-center">
+      <div className="border-y-4 border-black bg-satta-yellow px-3 py-5 text-center">
         <h1 className="animate-blink text-3xl leading-none font-extrabold tracking-wide text-black uppercase sm:text-5xl">
           {siteName}
         </h1>

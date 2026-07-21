@@ -17,6 +17,11 @@ export function notFound(message = "Not found"): Response {
   return json({ error: message }, 404);
 }
 
+/** The request was well formed but clashes with existing state. */
+export function conflict(message: string): Response {
+  return json({ error: message }, 409);
+}
+
 /** Returns an error Response when the caller is not authenticated, otherwise null. */
 export async function ensureApiAuth(): Promise<Response | null> {
   return (await isAuthenticated()) ? null : unauthorized();

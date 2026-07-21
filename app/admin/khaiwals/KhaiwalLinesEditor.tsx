@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Game, KhaiwalLine } from "../../lib/types";
+import TimeField from "../TimeField";
 
 const inputClass = "w-full rounded border-2 border-black px-3 py-2 text-sm";
 
@@ -92,11 +93,11 @@ export default function KhaiwalLinesEditor({
             ))}
           </select>
         </div>
-        <div className="w-32">
-          <input
+        <div className="w-36">
+          <TimeField
             value={time}
-            onChange={(e) => setTime(e.target.value)}
-            placeholder="1:30 PM"
+            onChange={setTime}
+            ariaLabel="Row time"
             className={inputClass}
           />
         </div>

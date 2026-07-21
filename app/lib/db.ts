@@ -362,15 +362,54 @@ export async function setPasswordHash(hash: string): Promise<void> {
 
 // ---- Mutators --------------------------------------------------------------
 
+/**
+ * Thrown when a game name would collide with one that already exists. Callers
+ * catch this to report "name already taken" instead of a generic failure.
+ */
+export class DuplicateGameNameError extends Error {
+  /** The name that clashed. Not `name` — that is Error's own class label. */
+  readonly gameName: string;
+
+  constructor(gameName: string) {
+    super(`A game named "${gameName}" already exists`);
+    this.name = "DuplicateGameNameError";
+    this.gameName = gameName;
+  }
+}
+
+/** Anchored, case-insensitive match on a trimmed name. */
+function exactNameFilter(name: string) {
+  return {
+    $regex: `^${name.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`,
+    $options: "i",
+  };
+}
+
 export async function upsertGame(input: {
   id?: string;
   name: string;
   time: string;
   active: boolean;
   table?: ResultTable;
+  /**
+   * Where a newly created game lands in the board order. New games go to the
+   * top so a just-added game is visible without scrolling or reordering. The
+   * upstream importer passes "bottom" — games it discovers should not push
+   * their way onto the home page's live board unasked.
+   */
+  placement?: "top" | "bottom";
 }): Promise<Game> {
   await ensureSeed();
   const col = await games();
+
+  // One name, one game. Checked for creates and renames alike, and here rather
+  // than in the admin action so the JSON API and importer are covered too.
+  const clash = await col.findOne({
+    name: exactNameFilter(input.name),
+    ...(input.id ? { _id: { $ne: input.id } } : {}),
+  });
+  if (clash) throw new DuplicateGameNameError(input.name.trim());
+
   if (input.id) {
     const set: Partial<GameDoc> = {
       name: input.name,
@@ -383,13 +422,23 @@ export async function upsertGame(input: {
     if (!d) throw new Error("Game not found");
     return toGame(d);
   }
-  const last = await col.find().sort({ order: -1 }).limit(1).next();
+
+  // `order` is a sort key, not an index — `reorderGames` renumbers from 0 on
+  // the next drag, so going one below the current minimum is safe even if it
+  // lands negative.
+  const edge =
+    input.placement === "bottom"
+      ? await col.find().sort({ order: -1 }).limit(1).next()
+      : await col.find().sort({ order: 1 }).limit(1).next();
+  const order =
+    input.placement === "bottom" ? (edge?.order ?? -1) + 1 : (edge?.order ?? 1) - 1;
+
   const doc: GameDoc = {
     _id: newId(),
     name: input.name,
     time: input.time,
     active: input.active,
-    order: (last?.order ?? -1) + 1,
+    order,
     table: input.table ?? "table1",
   };
   await col.insertOne(doc);
@@ -399,10 +448,7 @@ export async function upsertGame(input: {
 /** Case-insensitive lookup by trimmed name (used by the importer). */
 export async function findGameByName(name: string): Promise<Game | null> {
   await ensureSeed();
-  const trimmed = name.trim();
-  const d = await (await games()).findOne({
-    name: { $regex: `^${trimmed.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, $options: "i" },
-  });
+  const d = await (await games()).findOne({ name: exactNameFilter(name) });
   return d ? toGame(d) : null;
 }
 

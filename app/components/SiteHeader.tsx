@@ -20,7 +20,7 @@ export default function SiteHeader({
 
   return (
     <header className="bg-black text-satta-yellow">
-      <nav className="mx-auto grid max-w-5xl grid-cols-2 gap-2 px-[5px] py-3 sm:grid-cols-4 sm:gap-4">
+      <nav className="mx-auto grid max-w-6xl grid-cols-2 gap-4 px-[5px] py-3 sm:grid-cols-4 sm:gap-4">
         <Link href="/" className={`${pill} bg-white`}>
           {siteName} 🏠
         </Link>

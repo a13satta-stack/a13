@@ -11,6 +11,7 @@ import {
 } from "../../actions/admin";
 import { card, btnSuccess, btnDanger, btnIcon } from "../ui";
 import ActionForm from "../ActionForm";
+import TimeField from "../TimeField";
 import { useToast } from "../Toast";
 
 const fieldCls =
@@ -136,11 +137,11 @@ export default function GamesTable({ games }: { games: Game[] }) {
                   aria-label="Game name"
                   className={`${fieldCls} min-w-0 flex-1 basis-[140px]`}
                 />
-                <input
+                <TimeField
                   name="time"
                   defaultValue={g.time}
-                  aria-label="Result time"
-                  className={`${fieldCls} w-24 shrink-0`}
+                  ariaLabel="Result time"
+                  className={`${fieldCls} w-28 shrink-0`}
                 />
                 <select
                   name="table"

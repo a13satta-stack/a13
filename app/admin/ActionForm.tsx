@@ -12,10 +12,22 @@ function isFrameworkError(e: unknown): boolean {
 }
 
 /**
+ * What an action returns when it fails for a reason worth naming. Thrown
+ * errors are redacted in production builds, so an action that wants to explain
+ * itself — "that name is taken" — has to return the message instead.
+ */
+export type ActionFailure = { error: string };
+
+function isFailure(r: unknown): r is ActionFailure {
+  return typeof (r as ActionFailure | undefined)?.error === "string";
+}
+
+/**
  * A <form> whose Server Action reports its outcome as a toast.
  *
- * Server Actions are redacted in production, so a failure shows `error` (or a
- * generic line) rather than the raw message.
+ * An action signals failure either by returning `{ error }` — shown verbatim —
+ * or by throwing, which shows the generic `error` prop since the real message
+ * does not survive to the client in production.
  */
 export default function ActionForm({
   action,
@@ -24,8 +36,8 @@ export default function ActionForm({
   className,
   children,
 }: {
-  action: (formData: FormData) => Promise<void>;
-  /** Toast shown once the action resolves. */
+  action: (formData: FormData) => Promise<void | ActionFailure>;
+  /** Toast shown once the action resolves without an error. */
   success: string;
   /** Toast shown if it throws. Defaults to a generic failure line. */
   error?: string;
@@ -39,7 +51,11 @@ export default function ActionForm({
       className={className}
       action={async (formData) => {
         try {
-          await action(formData);
+          const result = await action(formData);
+          if (isFailure(result)) {
+            toast(result.error, "error");
+            return;
+          }
           toast(success, "success");
         } catch (e) {
           if (isFrameworkError(e)) throw e;
