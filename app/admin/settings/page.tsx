@@ -5,6 +5,7 @@ import { saveSettingsAction } from "../../actions/admin";
 import ChangePasswordForm from "./ChangePasswordForm";
 import { cardPad, input, label as labelClass, btnPrimary } from "../ui";
 import ActionForm from "../ActionForm";
+import SubmitButton from "../SubmitButton";
 
 export const dynamic = "force-dynamic";
 
@@ -73,7 +74,9 @@ export default async function SettingsPage() {
         </label>
 
         <div className="sm:col-span-2">
-          <button className={btnPrimary}>Save Settings</button>
+          <SubmitButton className={btnPrimary} pendingLabel="Saving…">
+            Save Settings
+          </SubmitButton>
         </div>
       </ActionForm>
 

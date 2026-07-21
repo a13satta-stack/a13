@@ -10,6 +10,7 @@ import {
 import KhaiwalLinesEditor from "./KhaiwalLinesEditor";
 import { cardPad, input, label, btnPrimary, btnSuccess, btnDanger, btnIcon } from "../ui";
 import ActionForm from "../ActionForm";
+import SubmitButton from "../SubmitButton";
 
 export const dynamic = "force-dynamic";
 
@@ -110,7 +111,9 @@ export default async function KhaiwalsPage() {
       >
         <h2 className="text-lg font-bold">Add new box</h2>
         <BoxFields games={games} />
-        <button className={btnPrimary}>+ Add Box</button>
+        <SubmitButton className={btnPrimary} pendingLabel="Adding…">
+          + Add Box
+        </SubmitButton>
       </ActionForm>
 
       <div className="space-y-4">
@@ -128,9 +131,9 @@ export default async function KhaiwalsPage() {
                 >
                   <input type="hidden" name="id" value={box.id} />
                   <input type="hidden" name="dir" value="up" />
-                  <button disabled={i === 0} className={btnIcon} title="Move up">
+                  <SubmitButton disabled={i === 0} className={btnIcon} title="Move up">
                     ↑
-                  </button>
+                  </SubmitButton>
                 </ActionForm>
                 <ActionForm
                   action={moveKhaiwalAction}
@@ -139,9 +142,13 @@ export default async function KhaiwalsPage() {
                 >
                   <input type="hidden" name="id" value={box.id} />
                   <input type="hidden" name="dir" value="down" />
-                  <button disabled={i === boxes.length - 1} className={btnIcon} title="Move down">
+                  <SubmitButton
+                    disabled={i === boxes.length - 1}
+                    className={btnIcon}
+                    title="Move down"
+                  >
                     ↓
-                  </button>
+                  </SubmitButton>
                 </ActionForm>
               </div>
             </div>
@@ -154,7 +161,9 @@ export default async function KhaiwalsPage() {
             >
               <input type="hidden" name="id" value={box.id} />
               <BoxFields box={box} games={games} />
-              <button className={btnSuccess}>Save changes</button>
+              <SubmitButton className={btnSuccess} pendingLabel="Saving…">
+                Save changes
+              </SubmitButton>
             </ActionForm>
 
             <ActionForm
@@ -164,7 +173,9 @@ export default async function KhaiwalsPage() {
               className="mt-3 border-t border-zinc-100 pt-3 text-right"
             >
               <input type="hidden" name="id" value={box.id} />
-              <button className={btnDanger}>Delete box</button>
+              <SubmitButton className={btnDanger} pendingLabel="Deleting…">
+                Delete box
+              </SubmitButton>
             </ActionForm>
           </div>
         ))}

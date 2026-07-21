@@ -11,6 +11,7 @@ import {
 } from "../../actions/admin";
 import { card, btnSuccess, btnDanger, btnIcon } from "../ui";
 import ActionForm from "../ActionForm";
+import SubmitButton from "../SubmitButton";
 import TimeField from "../TimeField";
 import { useToast } from "../Toast";
 
@@ -106,9 +107,9 @@ export default function GamesTable({ games }: { games: Game[] }) {
                 >
                   <input type="hidden" name="id" value={g.id} />
                   <input type="hidden" name="dir" value="up" />
-                  <button disabled={i === 0} className={btnIcon} title="Move up">
+                  <SubmitButton disabled={i === 0} className={btnIcon} title="Move up">
                     ↑
-                  </button>
+                  </SubmitButton>
                 </ActionForm>
                 <ActionForm
                   action={moveGameAction}
@@ -117,9 +118,13 @@ export default function GamesTable({ games }: { games: Game[] }) {
                 >
                   <input type="hidden" name="id" value={g.id} />
                   <input type="hidden" name="dir" value="down" />
-                  <button disabled={i === rows.length - 1} className={btnIcon} title="Move down">
+                  <SubmitButton
+                    disabled={i === rows.length - 1}
+                    className={btnIcon}
+                    title="Move down"
+                  >
                     ↓
-                  </button>
+                  </SubmitButton>
                 </ActionForm>
               </div>
 
@@ -155,7 +160,9 @@ export default function GamesTable({ games }: { games: Game[] }) {
                 <label className="flex shrink-0 items-center gap-1 text-xs">
                   <input type="checkbox" name="active" defaultChecked={g.active} /> Active
                 </label>
-                <button className={`${btnSuccess} shrink-0`}>Save</button>
+                <SubmitButton className={`${btnSuccess} shrink-0`} pendingLabel="Saving…">
+                  Save
+                </SubmitButton>
               </ActionForm>
 
               {/* Delete */}
@@ -166,7 +173,12 @@ export default function GamesTable({ games }: { games: Game[] }) {
                 className="shrink-0 md:w-[84px] md:text-right"
               >
                 <input type="hidden" name="id" value={g.id} />
-                <button className={`${btnDanger} w-full md:w-auto`}>Delete</button>
+                <SubmitButton
+                  className={`${btnDanger} w-full md:w-auto`}
+                  pendingLabel="Deleting…"
+                >
+                  Delete
+                </SubmitButton>
               </ActionForm>
             </li>
           );

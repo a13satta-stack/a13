@@ -21,6 +21,20 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Tailwind v4's preflight no longer gives buttons a pointer cursor the way v3
+   did, so every control in the app was rendering with a plain text arrow.
+   Restore it here rather than adding `cursor-pointer` to each button, and skip
+   disabled controls so they keep signalling that they can't be clicked.
+   In `base`, so a utility like `disabled:cursor-not-allowed` still wins. */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled),
+  label:has(> input[type="checkbox"]),
+  summary {
+    cursor: pointer;
+  }
+}
+
 /* Container-relative marquee: `padding-left: 100%` parks the text just past the
    right edge of its window, then it slides its full width to the left. This
    keeps the scroll readable at any container width instead of starting far

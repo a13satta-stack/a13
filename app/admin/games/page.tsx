@@ -4,6 +4,7 @@ import { getGamesSorted } from "../../lib/db";
 import { saveGameAction } from "../../actions/admin";
 import { cardPad, label, input, btnPrimary, muted } from "../ui";
 import ActionForm from "../ActionForm";
+import SubmitButton from "../SubmitButton";
 import TimeField from "../TimeField";
 import GamesTable from "./GamesTable";
 
@@ -40,7 +41,9 @@ export default async function GamesPage() {
         <label className="flex items-center gap-2 py-2 text-sm font-semibold">
           <input type="checkbox" name="active" defaultChecked /> Active
         </label>
-        <button className={btnPrimary}>+ Add Game</button>
+        <SubmitButton className={btnPrimary} pendingLabel="Adding…">
+          + Add Game
+        </SubmitButton>
       </ActionForm>
 
       <p className={`${muted} mb-2`}>

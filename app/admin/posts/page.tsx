@@ -4,6 +4,7 @@ import { getPosts } from "../../lib/db";
 import { savePostAction, deletePostAction } from "../../actions/admin";
 import { cardPad, input, btnPrimary, btnSuccess, btnDanger } from "../ui";
 import ActionForm from "../ActionForm";
+import SubmitButton from "../SubmitButton";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +24,9 @@ export default async function PostsPage() {
         <h2 className="text-lg font-bold">Add new post</h2>
         <input name="title" required placeholder="Post title" className={input} />
         <textarea name="body" rows={4} placeholder="Post content" className={input} />
-        <button className={btnPrimary}>+ Publish</button>
+        <SubmitButton className={btnPrimary} pendingLabel="Publishing…">
+          + Publish
+        </SubmitButton>
       </ActionForm>
 
       <div className="space-y-4">
@@ -42,7 +45,9 @@ export default async function PostsPage() {
                 <span className="text-xs text-zinc-500">
                   {new Date(p.createdAt).toLocaleString()}
                 </span>
-                <button className={btnSuccess}>Save</button>
+                <SubmitButton className={btnSuccess} pendingLabel="Saving…">
+                  Save
+                </SubmitButton>
               </div>
             </ActionForm>
             <ActionForm
@@ -52,7 +57,9 @@ export default async function PostsPage() {
               className="mt-3 border-t border-zinc-100 pt-3 text-right"
             >
               <input type="hidden" name="id" value={p.id} />
-              <button className={btnDanger}>Delete post</button>
+              <SubmitButton className={btnDanger} pendingLabel="Deleting…">
+                Delete post
+              </SubmitButton>
             </ActionForm>
           </div>
         ))}

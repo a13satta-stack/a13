@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { logoutAction } from "../actions/auth";
 import { ToastProvider } from "./Toast";
+import SubmitButton from "./SubmitButton";
 
 const NAV = [
   { href: "/admin", label: "Dashboard", icon: "🏠" },
@@ -91,12 +92,12 @@ export default function AdminShell({
           View Site <span aria-hidden>↗</span>
         </Link>
         <form action={logoutAction}>
-          <button
-            type="submit"
-            className="w-full rounded-lg bg-red-600/90 px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-red-600"
+          <SubmitButton
+            className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-red-600/90 px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60"
+            pendingLabel="Signing out…"
           >
             Logout
-          </button>
+          </SubmitButton>
         </form>
       </div>
     </div>

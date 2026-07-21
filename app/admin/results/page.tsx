@@ -4,6 +4,7 @@ import { getGamesSorted, getResultsForDate, dateKey } from "../../lib/db";
 import { saveResultsAction } from "../../actions/admin";
 import { card, cardPad, label, input, btnPrimary, btnGhost } from "../ui";
 import ActionForm from "../ActionForm";
+import SubmitButton from "../SubmitButton";
 
 export const dynamic = "force-dynamic";
 
@@ -63,7 +64,9 @@ export default async function ResultsPage({
         </div>
         {games.length === 0 && <p className="text-center text-zinc-500">Add games first.</p>}
         <div className="mt-5 flex justify-end">
-          <button className={btnPrimary}>Save Results</button>
+          <SubmitButton className={btnPrimary} pendingLabel="Saving…">
+            Save Results
+          </SubmitButton>
         </div>
       </ActionForm>
     </AdminShell>
