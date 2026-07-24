@@ -10,6 +10,7 @@ import {
   dateKey,
 } from "../lib/db";
 import { card, btnPrimary, btnGhost } from "./ui";
+import SyncNowButton from "./SyncNowButton";
 
 export const dynamic = "force-dynamic";
 
@@ -58,6 +59,19 @@ export default async function AdminDashboard() {
             </div>
           </Link>
         ))}
+      </div>
+
+      {/* Pull results from a7satta on demand. This is the only thing that
+          contacts a7satta — public pages read the database only, so results
+          update on the live site the moment this finishes and a visitor
+          refreshes. */}
+      <div className={`${card} mt-6 p-5`}>
+        <h2 className="text-lg font-bold">Fetch results from a7satta</h2>
+        <p className="mt-1 mb-3 text-sm text-zinc-500">
+          Pulls the latest a7satta results into your database. Nothing is fetched
+          automatically — click this whenever you want the site to catch up.
+        </p>
+        <SyncNowButton />
       </div>
 
       <div className={`${card} mt-6 p-5`}>

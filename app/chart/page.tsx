@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getGamesSorted, getSettings } from "../lib/db";
-import { syncOnPageLoad } from "../lib/sync";
 import { slugify } from "../lib/slug";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
@@ -21,8 +20,6 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ChartPage() {
-  await syncOnPageLoad();
-
   const [settings, games] = await Promise.all([getSettings(), getGamesSorted()]);
   const year = new Date().getFullYear();
 

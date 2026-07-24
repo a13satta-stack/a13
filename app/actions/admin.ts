@@ -17,6 +17,7 @@ import {
 } from "../lib/db";
 import type { KhaiwalLine } from "../lib/types";
 import { requireAuth } from "../lib/auth";
+import { runSyncOnce } from "../lib/sync";
 
 /** Parse the admin textarea (one "label | time" per line) into rows. */
 function parseKhaiwalLines(raw: string): KhaiwalLine[] {
@@ -35,6 +36,37 @@ function revalidateSite() {
   revalidatePath("/");
   revalidatePath("/chart");
   revalidatePath("/admin", "layout");
+}
+
+// ---- Upstream sync --------------------------------------------------------
+
+/** Result of a manual "fetch from a7satta" click, surfaced as an admin toast. */
+export type SyncNowResult = { ok: boolean; message: string };
+
+/**
+ * Pull the latest results from a7satta.com on demand and store them in the
+ * database. This is the only path that touches upstream — the public pages
+ * just render what's stored — so nothing is fetched unless an admin asks for
+ * it here. `force` ignores upstream's ETag so a click always re-pulls.
+ */
+export async function syncNowAction(): Promise<SyncNowResult> {
+  await requireAuth();
+  try {
+    const result = await runSyncOnce(true);
+    if (result.status === "ok") {
+      revalidateSite();
+      const { cellsWritten, gamesTouched } = result.summary;
+      return {
+        ok: true,
+        message: `Fetched from a7satta: ${cellsWritten} results across ${gamesTouched} games updated.`,
+      };
+    }
+    // `force` normally rules out "unchanged", but handle it for completeness.
+    return { ok: true, message: "a7satta returned no new results." };
+  } catch (e) {
+    const detail = e instanceof Error ? e.message : String(e);
+    return { ok: false, message: `Fetch failed: ${detail}` };
+  }
 }
 
 // ---- Games ----------------------------------------------------------------

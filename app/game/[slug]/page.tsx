@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getGamesSorted, getSettings, getResultsForYear, getResultsForDate, dateKey } from "../../lib/db";
 import { slugify } from "../../lib/slug";
-import { syncOnPageLoad } from "../../lib/sync";
 import SiteHeader from "../../components/SiteHeader";
 import SiteFooter from "../../components/SiteFooter";
 import YearlyChart from "../../components/YearlyChart";
@@ -53,8 +52,6 @@ export default async function GamePage({
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ year?: string }>;
 }) {
-  await syncOnPageLoad();
-
   const { slug } = await params;
   const game = await findGame(slug);
   if (!game) notFound();

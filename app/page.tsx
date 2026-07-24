@@ -8,7 +8,6 @@ import {
   getKhaiwalsSorted,
   dateKey,
 } from "./lib/db";
-import { syncOnPageLoad } from "./lib/sync";
 import SiteHeader from "./components/SiteHeader";
 import SiteFooter from "./components/SiteFooter";
 import FeaturedBanner from "./components/FeaturedBanner";
@@ -25,10 +24,9 @@ function whatsappLink(number: string, text: string) {
 }
 
 export default async function Home() {
-  // Pull anything new from upstream before reading, so a load or refresh shows
-  // the latest results. Costs a 304 when nothing changed and never throws.
-  await syncOnPageLoad();
-
+  // Reads straight from the database — no upstream fetch on the render path.
+  // Results are pulled from a7satta only when an admin clicks "Fetch results"
+  // in the panel; this page just shows whatever is stored.
   const now = new Date();
   const yesterday = new Date(now);
   yesterday.setDate(now.getDate() - 1);
