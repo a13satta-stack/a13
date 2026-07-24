@@ -5,7 +5,9 @@ import { slugify } from "../lib/slug";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 
-export const dynamic = "force-dynamic";
+// ISR — served from the edge CDN, regenerated at most once a minute and purged
+// on admin edits via `revalidatePath("/chart")`. See the home page for why.
+export const revalidate = 60;
 
 export async function generateMetadata(): Promise<Metadata> {
   const year = new Date().getFullYear();

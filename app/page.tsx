@@ -16,7 +16,13 @@ import KhaiwalBoxes from "./components/KhaiwalBoxes";
 import ResultsBoard from "./components/ResultsBoard";
 import ChartTable from "./components/ChartTable";
 
-export const dynamic = "force-dynamic";
+// ISR: the page is rendered once and served from Vercel's edge CDN, not by a
+// serverless function that opens a fresh Atlas connection on every visit. It
+// regenerates at most once a minute (a safety net that also corrects the
+// "today"/"yesterday" date after midnight), and admin edits / "Fetch results"
+// purge it instantly via `revalidatePath("/")`, so results are never stale on
+// the next refresh.
+export const revalidate = 60;
 
 function whatsappLink(number: string, text: string) {
   const digits = number.replace(/\D/g, "");

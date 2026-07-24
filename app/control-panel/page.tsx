@@ -1,10 +1,16 @@
 import { redirect } from "next/navigation";
-import { isAuthenticated } from "../../lib/auth";
+import { isAuthenticated } from "../lib/auth";
 import LoginForm from "./LoginForm";
 
 export const dynamic = "force-dynamic";
 
-export default async function LoginPage() {
+export const metadata = {
+  title: "Control Panel",
+  // Keep the admin entrance out of search indexes.
+  robots: { index: false, follow: false },
+};
+
+export default async function ControlPanelPage() {
   if (await isAuthenticated()) {
     redirect("/admin");
   }

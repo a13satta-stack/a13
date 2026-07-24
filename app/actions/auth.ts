@@ -26,7 +26,7 @@ export async function loginAction(
 
 export async function logoutAction(): Promise<void> {
   await destroySession();
-  redirect("/admin/login");
+  redirect("/control-panel");
 }
 
 export async function changePasswordAction(

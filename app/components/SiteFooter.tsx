@@ -12,7 +12,7 @@ export default function SiteFooter({ settings }: { settings: SiteSettings }) {
           <Link href="/contact">Contact</Link>
           <Link href="/terms">Terms &amp; Conditions</Link>
           <Link href="/privacy">Privacy Policy</Link>
-          <Link href="/admin/login">Admin</Link>
+          <Link href="/control-panel">Admin</Link>
         </div>
         <p className="text-[11px] text-yellow-200/80">{settings.disclaimer}</p>
         <p className="mt-2">© {year} A13 Satta. All Rights Reserved.</p>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { loginAction } from "../../actions/auth";
+import { loginAction } from "../actions/auth";
 
 export default function LoginForm() {
   const [state, action, pending] = useActionState(loginAction, {});
@@ -28,10 +28,6 @@ export default function LoginForm() {
       >
         {pending ? "Signing in…" : "Login"}
       </button>
-      {/* <p className="text-center text-xs text-zinc-500">
-        Default password: <code className="rounded bg-zinc-100 px-1 py-0.5">admin123</code> (change
-        it in Settings)
-      </p> */}
     </form>
   );
 }
