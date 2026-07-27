@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Mukta, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import {
   HOME_DESCRIPTION,
@@ -11,9 +11,13 @@ import {
 } from "./lib/seo";
 import ResourceHints from "./components/ResourceHints";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+// Mukta covers both Latin and Devanagari, so the site's mixed English/Hindi
+// text renders in one family. Not a variable font — weights are listed
+// explicitly (400 body … 800 for the bold/extrabold headings the boards use).
+const mukta = Mukta({
+  variable: "--font-mukta",
+  subsets: ["latin", "devanagari"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 const geistMono = Geist_Mono({
@@ -102,7 +106,7 @@ export default function RootLayout({
   return (
     <html
       lang="en-IN"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${mukta.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <ResourceHints />

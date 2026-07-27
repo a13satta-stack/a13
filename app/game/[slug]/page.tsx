@@ -47,19 +47,15 @@ export async function generateMetadata({
 
 export default async function GamePage({
   params,
-  searchParams,
 }: {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ year?: string }>;
 }) {
   const { slug } = await params;
   const game = await findGame(slug);
   if (!game) notFound();
 
-  const sp = await searchParams;
   const now = new Date();
-  const year = Number(sp.year) || now.getFullYear();
-  const years = Array.from({ length: 6 }, (_, i) => now.getFullYear() - 4 + i);
+  const year = now.getFullYear();
 
   const [settings, results, todayMap] = await Promise.all([
     getSettings(),
@@ -87,22 +83,6 @@ export default async function GamePage({
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <form method="GET" className="flex items-center gap-2">
-              <select
-                name="year"
-                defaultValue={year}
-                className="rounded border-2 border-black bg-white px-3 py-1.5 text-sm font-bold"
-              >
-                {years.map((y) => (
-                  <option key={y} value={y}>
-                    {y}
-                  </option>
-                ))}
-              </select>
-              <button className="rounded bg-zinc-800 px-3 py-1.5 text-sm font-bold text-white">
-                Show
-              </button>
-            </form>
             <RefreshButton />
           </div>
         </div>

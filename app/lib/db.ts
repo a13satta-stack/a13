@@ -166,6 +166,8 @@ function seedSettings(featuredGameId: string | null): SettingsDoc {
     contactEmail: "raossachin37@gmail.com",
     disclaimer:
       "DISCLAIMER - A13 Satta is a non-commercial informational website. Please view this site at your own risk. All the information shown on this website is sponsored, and we warn you that satta matka gambling / betting may be banned in your country. We are not responsible for any issues or scams. Everything here is subject to copyright. Thank you.",
+    // Off by default — the site never contacts a7satta until an admin enables it.
+    autoSync: false,
   };
 }
 
@@ -278,7 +280,8 @@ export async function getSettings(): Promise<SiteSettings> {
   if (!d) return seedSettings(null);
   const { _id, ...rest } = d;
   void _id;
-  return rest;
+  // Default for settings docs written before autoSync existed.
+  return { ...rest, autoSync: rest.autoSync ?? false };
 }
 
 export async function getPosts(): Promise<BlogPost[]> {

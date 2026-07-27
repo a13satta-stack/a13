@@ -28,7 +28,6 @@ function PendingBurst() {
         fontSize="5.5"
         fontWeight="bold"
         fill="#fff"
-        className="animate-blink"
       >
         wait
       </text>

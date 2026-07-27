@@ -8,6 +8,7 @@ import {
   getKhaiwalsSorted,
   dateKey,
 } from "./lib/db";
+import AutoSyncTrigger from "./components/AutoSyncTrigger";
 import SiteHeader from "./components/SiteHeader";
 import SiteFooter from "./components/SiteFooter";
 import FeaturedBanner from "./components/FeaturedBanner";
@@ -27,6 +28,20 @@ export const revalidate = 60;
 function whatsappLink(number: string, text: string) {
   const digits = number.replace(/\D/g, "");
   return `https://wa.me/${digits}?text=${encodeURIComponent(text)}`;
+}
+
+/**
+ * Parse a "6:10 PM" style result time into minutes since midnight so games can
+ * be ordered by when their result lands. Returns -1 for unparseable times, which
+ * simply sorts them last.
+ */
+function parseTimeToMinutes(time: string): number {
+  const m = /^\s*(\d{1,2}):(\d{2})\s*(AM|PM)?/i.exec(time);
+  if (!m) return -1;
+  let hour = Number(m[1]) % 12;
+  const minute = Number(m[2]);
+  if (m[3]?.toUpperCase() === "PM") hour += 12;
+  return hour * 60 + minute;
 }
 
 export default async function Home() {
@@ -50,12 +65,26 @@ export default async function Home() {
   const today = dateKey();
   const todayResults = results[today] ?? {};
   const featured = games.find((g) => g.id === settings.featuredGameId) ?? games[0] ?? null;
-  // The black live board shows the first three games in admin order; the
-  // featured game gets the yellow band underneath.
-  const liveGames = games.filter((g) => g.id !== featured?.id).slice(0, 3);
+  // The black live board shows the four latest results — ordered by result time
+  // (freshest declaration first), NOT by admin/index order. Games that have
+  // already declared today lead; any leftover slots fall back to the games
+  // whose result is due soonest, so the board is never empty early in the day.
+  const candidates = games.filter((g) => g.id !== featured?.id);
+  const declared = candidates
+    .filter((g) => todayResults[g.id])
+    .sort((a, b) => parseTimeToMinutes(b.time) - parseTimeToMinutes(a.time));
+  const pending = candidates
+    .filter((g) => !todayResults[g.id])
+    .sort((a, b) => parseTimeToMinutes(a.time) - parseTimeToMinutes(b.time));
+  const liveGames = [...declared, ...pending].slice(0, 4);
 
   return (
     <>
+      {/* When the admin has auto-sync on, this fires a fire-and-forget refresh
+          from a7satta AFTER the page paints — the page itself never waits on it.
+          Renders nothing and does nothing when the toggle is off. */}
+      <AutoSyncTrigger enabled={settings.autoSync} />
+
       <SiteHeader siteName={settings.siteName} />
 
       <FeaturedBanner

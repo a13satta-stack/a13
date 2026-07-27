@@ -5,7 +5,6 @@ import { saveResultsAction } from "../../actions/admin";
 import { card, cardPad, label, input, btnPrimary, btnGhost } from "../ui";
 import ActionForm from "../ActionForm";
 import SubmitButton from "../SubmitButton";
-import SyncNowButton from "../SyncNowButton";
 
 export const dynamic = "force-dynamic";
 
@@ -26,15 +25,6 @@ export default async function ResultsPage({
 
   return (
     <AdminShell title="Enter Results">
-      {/* Auto-fill from a7satta before editing by hand. It writes today's and
-          yesterday's numbers into the database; reload the date to see them. */}
-      <div className={`${card} mb-5 flex flex-wrap items-center justify-between gap-3 p-4`}>
-        <p className="text-sm text-zinc-600">
-          Pull the latest numbers from Other Website, then tweak anything by hand below.
-        </p>
-        <SyncNowButton />
-      </div>
-
       <form method="GET" className="mb-5 flex flex-wrap items-end gap-3">
         <div>
           <label className={label}>Result date</label>

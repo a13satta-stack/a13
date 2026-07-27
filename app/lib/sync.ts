@@ -132,7 +132,6 @@ export function runSyncOnce(force = false): Promise<SyncResult> {
  */
 export async function syncOnPageLoad(): Promise<SyncResult> {
   const g = store();
-  if (!ENABLED) return { status: "skipped" };
 
   // Join a pass already running rather than starting a second one.
   if (g.inFlight) {

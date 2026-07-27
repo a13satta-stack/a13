@@ -13,7 +13,7 @@ function WaitStar() {
       viewBox="0 0 100 100"
       role="img"
       aria-label="Result awaited"
-      className="animate-blink h-14 w-14 sm:h-16 sm:w-16"
+      className="h-14 w-14 sm:h-16 sm:w-16"
     >
       <polygon points={STAR_POINTS} fill="#e60000" />
       <text
@@ -55,7 +55,7 @@ function LiveGame({ game, result }: { game: Game; result: string | undefined }) 
       </Link>
       <div className="mt-2 flex justify-center">
         {result ? (
-          <span className="animate-blink text-4xl leading-none font-black text-white sm:text-5xl">
+          <span className="text-4xl leading-none font-black text-white sm:text-5xl">
             {result}
           </span>
         ) : (
@@ -76,7 +76,7 @@ export default function FeaturedBanner({
 }: {
   siteName: string;
   tagline: string;
-  /** Games shown in the black live board, in admin order. */
+  /** Games shown in the black live board, latest result time first. */
   liveGames: Game[];
   /** Game highlighted in the yellow band below the board. */
   featured: Game | null;

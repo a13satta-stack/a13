@@ -73,6 +73,28 @@ export default async function SettingsPage() {
           <textarea name="disclaimer" rows={4} defaultValue={settings.disclaimer} className={field} />
         </label>
 
+        {/* Auto-sync toggle. When on, the home page refreshes results from
+            a7satta in the background (after the response, so it never slows the
+            site). When off, a7satta is never contacted. */}
+        <label className="flex items-start gap-3 rounded-lg border border-zinc-200 bg-zinc-50 p-4 sm:col-span-2">
+          <input
+            type="checkbox"
+            name="autoSync"
+            defaultChecked={settings.autoSync}
+            className="mt-0.5 h-5 w-5 shrink-0"
+          />
+          <span>
+            <span className="block text-sm font-bold text-zinc-900">
+              Auto-fetch results from a7satta
+            </span>
+            <span className="mt-0.5 block text-xs text-zinc-500">
+              On: the site pulls the latest results from a7satta in the background as it&apos;s
+              used and stores them — without slowing any page. Off: a7satta is never contacted and
+              you manage results by hand.
+            </span>
+          </span>
+        </label>
+
         <div className="sm:col-span-2">
           <SubmitButton className={btnPrimary} pendingLabel="Saving…">
             Save Settings

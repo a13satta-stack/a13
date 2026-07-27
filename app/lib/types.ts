@@ -64,6 +64,12 @@ export interface SiteSettings {
   whatsappNumber: string;
   contactEmail: string;
   disclaimer: string;
+  /**
+   * When true, page loads refresh results from a7satta in the background (after
+   * the response is sent, so the site never waits on it) and store them. When
+   * false, a7satta is never contacted. Toggled from the admin panel.
+   */
+  autoSync: boolean;
 }
 
 /** results[dateKey][gameId] = result number string ("45", "07", ...) */
