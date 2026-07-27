@@ -67,7 +67,7 @@ export default function GamesTable({ games }: { games: Game[] }) {
       </div>
 
       <ul className="divide-y divide-zinc-100">
-        {rows.map((g, i) => {
+        {rows?.reverse()?.map((g, i) => {
           const isDragging = dragIndex === i;
           const isDropTarget = overIndex === i && dragIndex !== null && dragIndex !== i;
           return (
