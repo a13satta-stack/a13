@@ -1,6 +1,7 @@
 import Link from "next/link";
+import { pickLiveBoard, nowMinutesInSiteTz } from "./lib/board";
 import {
-  getGamesSorted,
+  getActiveGamesSorted,
   getSettings,
   getResultsForMonth,
   getResultsForDate,
@@ -30,20 +31,6 @@ function whatsappLink(number: string, text: string) {
   return `https://wa.me/${digits}?text=${encodeURIComponent(text)}`;
 }
 
-/**
- * Parse a "6:10 PM" style result time into minutes since midnight so games can
- * be ordered by when their result lands. Returns -1 for unparseable times, which
- * simply sorts them last.
- */
-function parseTimeToMinutes(time: string): number {
-  const m = /^\s*(\d{1,2}):(\d{2})\s*(AM|PM)?/i.exec(time);
-  if (!m) return -1;
-  let hour = Number(m[1]) % 12;
-  const minute = Number(m[2]);
-  if (m[3]?.toUpperCase() === "PM") hour += 12;
-  return hour * 60 + minute;
-}
-
 export default async function Home() {
   // Reads straight from the database — no upstream fetch on the render path.
   // Results are pulled from a7satta only when an admin clicks "Fetch results"
@@ -55,7 +42,7 @@ export default async function Home() {
 
   const [settings, games, results, yesterdayResults, posts, khaiwals] = await Promise.all([
     getSettings(),
-    getGamesSorted(),
+    getActiveGamesSorted(),
     getResultsForMonth(now.getFullYear(), now.getMonth()),
     getResultsForDate(yesterdayKey),
     getPosts(),
@@ -65,18 +52,10 @@ export default async function Home() {
   const today = dateKey();
   const todayResults = results[today] ?? {};
   const featured = games.find((g) => g.id === settings.featuredGameId) ?? games[0] ?? null;
-  // The black live board shows the four latest results — ordered by result time
-  // (freshest declaration first), NOT by admin/index order. Games that have
-  // already declared today lead; any leftover slots fall back to the games
-  // whose result is due soonest, so the board is never empty early in the day.
-  const candidates = games.filter((g) => g.id !== featured?.id);
-  const declared = candidates
-    .filter((g) => todayResults[g.id])
-    .sort((a, b) => parseTimeToMinutes(b.time) - parseTimeToMinutes(a.time));
-  const pending = candidates
-    .filter((g) => !todayResults[g.id])
-    .sort((a, b) => parseTimeToMinutes(a.time) - parseTimeToMinutes(b.time));
-  const liveGames = [...declared, ...pending].slice(0, 4);
+  // The black board shows ONE game: the last result until the next game's time
+  // nears, then that next game with WAIT from 30 minutes before it.
+  const nowMin = nowMinutesInSiteTz(now);
+  const liveBoard = pickLiveBoard(games, todayResults, yesterdayResults, nowMin);
 
   return (
     <>
@@ -90,7 +69,7 @@ export default async function Home() {
       <FeaturedBanner
         siteName={settings.siteName}
         tagline={settings.tagline}
-        liveGames={liveGames}
+        liveBoard={liveBoard}
         featured={featured}
         today={todayResults}
         yesterday={yesterdayResults}

@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getGamesSorted } from "./lib/db";
+import { getActiveGamesSorted } from "./lib/db";
 import { slugify } from "./lib/slug";
 import { absoluteUrl } from "./lib/seo";
 
@@ -26,7 +26,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // hiccup degrades to the static routes rather than failing the whole file.
   let gameRoutes: MetadataRoute.Sitemap = [];
   try {
-    const games = await getGamesSorted();
+    const games = await getActiveGamesSorted();
     gameRoutes = games.map((g) => ({
       url: absoluteUrl(`/game/${slugify(g.name)}`),
       lastModified: now,

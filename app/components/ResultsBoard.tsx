@@ -95,7 +95,7 @@ function BoardTable({
         <div className="px-2 py-1.5">आज का रिजल्ट</div>
       </div>
 
-      {games.map((g) => (
+      {games?.reverse()?.map((g) => (
         <GameRow key={g.id} g={g} today={today} yesterday={yesterday} />
       ))}
       {games.length === 0 && (

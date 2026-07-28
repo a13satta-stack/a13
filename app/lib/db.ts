@@ -1,6 +1,7 @@
 import crypto from "crypto";
 import type { Collection } from "mongodb";
 import { getDb } from "./mongo";
+import { isAllowedGame } from "./games-allowlist";
 import type {
   Game,
   BlogPost,
@@ -119,6 +120,7 @@ function seedGames(): GameDoc[] {
     ["GAZIABAD", "10:35 PM"],
     ["DWARKA", "11:50 PM"],
     ["GALI", "11:50 PM"],
+    ["DISAWAR", "5:00 AM"],
     ["HR SATTA", "12:15 PM"],
     ["KKR CITY", "12:30 PM"],
     ["UJJALA SUPER", "12:30 PM"],
@@ -139,14 +141,16 @@ function seedGames(): GameDoc[] {
     ["DEHRADUN CITY", "9:40 PM"],
     ["DAMAN", "9:50 PM"],
   ];
-  // First 11 games (SADAR BAZAR … GALI) form table1; the rest table2.
+  // First 12 games (SADAR BAZAR … DISAWAR) form table1; the rest table2. Only
+  // the allowlisted games are active — the others are seeded but hidden, matching
+  // how the importer treats every game upstream sends.
   return names.map(([name, time], i) => ({
     _id: crypto.randomUUID(),
     name,
     time,
     order: i,
-    active: true,
-    table: (i <= 10 ? "table1" : "table2") as ResultTable,
+    active: isAllowedGame(name),
+    table: (i <= 11 ? "table1" : "table2") as ResultTable,
   }));
 }
 
@@ -265,6 +269,16 @@ export function normalizeResult(raw: unknown): string {
 export async function getGamesSorted(): Promise<Game[]> {
   await ensureSeed();
   const docs = await (await games()).find().sort({ order: 1 }).toArray();
+  return docs.map(toGame);
+}
+
+/**
+ * Active games only, for the public site. Inactive games are still imported and
+ * keep their results, but never surface on the board, chart, or game pages.
+ */
+export async function getActiveGamesSorted(): Promise<Game[]> {
+  await ensureSeed();
+  const docs = await (await games()).find({ active: true }).sort({ order: 1 }).toArray();
   return docs.map(toGame);
 }
 

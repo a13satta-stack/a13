@@ -1,6 +1,7 @@
 import { findGameByName, upsertGame, bulkSetResults, saveSettings, dateKey } from "./db";
 import type { ResultTable } from "./types";
 import { to12h } from "./time";
+import { isAllowedGame, canonicalGameName } from "./games-allowlist";
 
 // ---- Upstream payload shapes ----------------------------------------------
 
@@ -105,6 +106,10 @@ export async function importA7Payload(
 
     const time = timeByName.get(key) ?? "";
     const table = tableByName.get(key) ?? fallbackTable;
+    // Only the six allowlisted games are shown; everything else is imported but
+    // stays inactive. The allowlist is enforced on every sync, so it stays the
+    // single source of truth even if a game was toggled by hand in admin.
+    const active = isAllowedGame(name);
 
     const existing = await findGameByName(name);
     if (existing) {
@@ -113,7 +118,7 @@ export async function importA7Payload(
         name: existing.name,
         // Keep whatever is set if upstream didn't tell us a time.
         time: time || existing.time,
-        active: existing.active,
+        active,
         table: table || existing.table,
       });
       nameToId.set(key, existing.id);
@@ -121,11 +126,12 @@ export async function importA7Payload(
       return existing.id;
     }
     // Appended, not prepended: a game upstream just started publishing should
-    // not silently take over the home page's live board.
+    // not silently take over the home page's live board. Allowed games are
+    // created under their canonical spelling so the board reads cleanly.
     const created = await upsertGame({
-      name: name.trim(),
+      name: canonicalGameName(name) ?? name.trim(),
       time,
-      active: true,
+      active,
       table,
       placement: "bottom",
     });

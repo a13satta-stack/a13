@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getGamesSorted, getSettings, getResultsForYear, getResultsForDate, dateKey } from "../../lib/db";
+import { getActiveGamesSorted, getSettings, getResultsForYear, getResultsForDate, dateKey } from "../../lib/db";
 import { slugify } from "../../lib/slug";
 import SiteHeader from "../../components/SiteHeader";
 import SiteFooter from "../../components/SiteFooter";
@@ -11,7 +11,8 @@ import RefreshButton from "../../components/RefreshButton";
 export const dynamic = "force-dynamic";
 
 async function findGame(slug: string) {
-  const games = await getGamesSorted();
+  // Active only: an inactive game's page 404s rather than exposing a hidden game.
+  const games = await getActiveGamesSorted();
   return games.find((g) => slugify(g.name) === slug) ?? null;
 }
 

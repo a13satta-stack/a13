@@ -66,18 +66,25 @@ function LiveGame({ game, result }: { game: Game; result: string | undefined }) 
   );
 }
 
+/** One slot on the black board: a game plus the number to show (absent → WAIT). */
+export type LiveBoardEntry = { game: Game; result?: string };
+
 export default function FeaturedBanner({
   siteName,
   tagline,
-  liveGames,
+  liveBoard,
   featured,
   today,
   yesterday,
 }: {
   siteName: string;
   tagline: string;
-  /** Games shown in the black live board, latest result time first. */
-  liveGames: Game[];
+  /**
+   * The black board's single focus: the most recent declared result, or the
+   * game currently being awaited (shown with WAIT). Chosen on the home page by
+   * the clock, so only one game shows — not the whole list.
+   */
+  liveBoard: LiveBoardEntry[];
   /** Game highlighted in the yellow band below the board. */
   featured: Game | null;
   today: Record<string, string>;
@@ -97,8 +104,8 @@ export default function FeaturedBanner({
       <div className="bg-black px-3 py-4 text-center">
         {tagline && <p className="text-lg font-bold text-white sm:text-xl">{tagline}</p>}
         <div className="mt-3 space-y-3">
-          {liveGames.map((g) => (
-            <LiveGame key={g.id} game={g} result={today[g.id]} />
+          {liveBoard.map(({ game, result }) => (
+            <LiveGame key={game.id} game={game} result={result} />
           ))}
         </div>
       </div>
