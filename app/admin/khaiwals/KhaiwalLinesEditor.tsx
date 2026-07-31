@@ -7,10 +7,12 @@ import TimeField from "../TimeField";
 const inputClass = "w-full rounded border-2 border-black px-3 py-2 text-sm";
 
 /**
- * Timing-row editor: admin picks a game from the dropdown, sets the time, and
- * adds rows one at a time. Each game can be added only once. The rows are
- * serialised into a hidden "label | time" textarea so the existing server
- * action (parseKhaiwalLines) keeps working unchanged.
+ * Timing-row editor: the admin types any label (Hindi or English), sets the
+ * time, and adds rows one at a time. The game list is offered as autocomplete
+ * suggestions — picking one auto-fills its time — but the label is free text,
+ * so custom rows that aren't games can be added too. Rows are serialised into a
+ * hidden "label | time" textarea so the server action (parseKhaiwalLines) keeps
+ * working unchanged.
  */
 export default function KhaiwalLinesEditor({
   games,
@@ -22,23 +24,24 @@ export default function KhaiwalLinesEditor({
   fieldName?: string;
 }) {
   const [rows, setRows] = useState<KhaiwalLine[]>(defaultLines);
-  const [gameName, setGameName] = useState("");
+  const [label, setLabel] = useState("");
   const [time, setTime] = useState("");
 
-  const used = new Set(rows.map((r) => r.label));
-  const available = games.filter((g) => !used.has(g.name));
-
-  function onSelectGame(name: string) {
-    setGameName(name);
-    const g = games.find((x) => x.name === name);
-    setTime(g?.time ?? "");
+  function onLabelChange(value: string) {
+    setLabel(value);
+    // Convenience: if what they typed matches a game exactly and no time is set
+    // yet, fill in that game's time. Never clobbers a time already entered.
+    if (!time.trim()) {
+      const g = games.find((x) => x.name.toLowerCase() === value.trim().toLowerCase());
+      if (g?.time) setTime(g.time);
+    }
   }
 
   function addRow() {
-    const label = gameName.trim();
-    if (!label || used.has(label)) return; // one game, one row
-    setRows([...rows, { label, time: time.trim() }]);
-    setGameName("");
+    const text = label.trim();
+    if (!text) return;
+    setRows([...rows, { label: text, time: time.trim() }]);
+    setLabel("");
     setTime("");
   }
 
@@ -80,18 +83,25 @@ export default function KhaiwalLinesEditor({
 
       <div className="flex flex-wrap items-end gap-2">
         <div className="min-w-[140px] flex-1">
-          <select
-            value={gameName}
-            onChange={(e) => onSelectGame(e.target.value)}
+          <input
+            list="khaiwal-game-suggestions"
+            value={label}
+            onChange={(e) => onLabelChange(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                addRow();
+              }
+            }}
+            placeholder="कोई भी नाम लिखें / type any label (Hindi or English)"
+            aria-label="Row label"
             className={inputClass}
-          >
-            <option value="">Select game…</option>
-            {available.map((g) => (
-              <option key={g.id} value={g.name}>
-                {g.name}
-              </option>
+          />
+          <datalist id="khaiwal-game-suggestions">
+            {games.map((g) => (
+              <option key={g.id} value={g.name} />
             ))}
-          </select>
+          </datalist>
         </div>
         <div className="w-36">
           <TimeField
@@ -104,16 +114,12 @@ export default function KhaiwalLinesEditor({
         <button
           type="button"
           onClick={addRow}
-          disabled={!gameName}
+          disabled={!label.trim()}
           className="rounded bg-black px-4 py-2 text-sm font-bold text-satta-yellow disabled:opacity-40"
         >
           + Add
         </button>
       </div>
-
-      {available.length === 0 && games.length > 0 && (
-        <p className="text-xs text-gray-500">All games have been added.</p>
-      )}
     </div>
   );
 }
