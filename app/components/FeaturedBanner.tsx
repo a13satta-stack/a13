@@ -49,7 +49,8 @@ function LiveGame({ game, result }: { game: Game; result: string | undefined }) 
     <div className="py-2">
       <Link
         href={`/game/${slugify(game.name)}`}
-        className="text-2xl font-extrabold tracking-wide text-white uppercase hover:underline sm:text-3xl"
+        className="text-5xl font-extrabold tracking-wide text-white uppercase hover:underline sm:text-3xl"
+      style={{ fontSize: "40px" }}
       >
         {game.name}
       </Link>
@@ -96,7 +97,9 @@ export default function FeaturedBanner({
           The title blinks via opacity/visibility, so the band keeps its height
           through the hidden half and nothing below it shifts. */}
       <div className="border-y-4 border-black bg-satta-yellow px-3 py-5 text-center">
-        <h1 className="animate-blink text-3xl leading-none font-extrabold tracking-wide text-black uppercase sm:text-5xl">
+        <h1 className="animate-blink text-3xl leading-none font-extrabold tracking-wide text-black uppercase sm:text-5xl"
+        // style={{fontSize:"40px"}}
+        >
           {siteName}
         </h1>
       </div>
