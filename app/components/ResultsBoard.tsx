@@ -60,14 +60,14 @@ function GameRow({
       </Link>
 
       <div
-        className={`${CELL_BORDER} flex items-center justify-center bg-white px-2 py-2 text-lg font-bold text-brand-indigo/70`}
+        className={`${CELL_BORDER} flex items-center justify-center bg-white px-2 py-2 text-2xl font-black text-brand-indigo`}
       >
-        {prev ?? <span className="text-gray-400">--</span>}
+        {prev ?? <span className="text-lg text-gray-400">--</span>}
       </div>
 
       <div className="flex items-center justify-center bg-white px-2 py-2">
         {result ? (
-          <span className="text-xl font-black text-satta-red">{result}</span>
+          <span className="text-2xl font-black text-satta-red">{result}</span>
         ) : (
           <PendingBurst />
         )}

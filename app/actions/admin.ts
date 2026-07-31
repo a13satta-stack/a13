@@ -34,6 +34,9 @@ function parseKhaiwalLines(raw: string): KhaiwalLine[] {
 function revalidateSite() {
   revalidatePath("/");
   revalidatePath("/chart");
+  // Every game page is ISR-cached; purge them all so an edited result shows
+  // there immediately instead of after the revalidate window.
+  revalidatePath("/game/[slug]", "page");
   revalidatePath("/admin", "layout");
 }
 

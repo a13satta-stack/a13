@@ -8,7 +8,25 @@ import SiteFooter from "../../components/SiteFooter";
 import YearlyChart from "../../components/YearlyChart";
 import RefreshButton from "../../components/RefreshButton";
 
-export const dynamic = "force-dynamic";
+// ISR — each game page renders once and is served from Vercel's edge CDN, not
+// by a serverless function that queries Atlas on every visit. Regenerates at
+// most once a minute; admin edits purge it via `revalidatePath` (see below).
+// Safe to cache now that the year filter no longer reads searchParams.
+export const revalidate = 60;
+
+// Prerender every active game's page at build so they're edge-cached from the
+// first visit. A slug that isn't listed (e.g. a game added later) still renders
+// on demand and is cached thereafter. If the database is unreachable at build
+// time, fall back to an empty list — every page then renders on demand and is
+// ISR-cached at runtime, so a build never fails on a database hiccup.
+export async function generateStaticParams() {
+  try {
+    const games = await getActiveGamesSorted();
+    return games.map((g) => ({ slug: slugify(g.name) }));
+  } catch {
+    return [];
+  }
+}
 
 async function findGame(slug: string) {
   // Active only: an inactive game's page 404s rather than exposing a hidden game.

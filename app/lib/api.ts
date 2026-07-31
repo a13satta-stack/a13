@@ -31,6 +31,8 @@ export async function ensureApiAuth(): Promise<Response | null> {
 export function revalidateSite(): void {
   revalidatePath("/");
   revalidatePath("/chart");
+  // Game pages are ISR-cached — purge them so edits/sync show there at once.
+  revalidatePath("/game/[slug]", "page");
   revalidatePath("/admin", "layout");
 }
 
