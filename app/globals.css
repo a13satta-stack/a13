@@ -1,20 +1,22 @@
 @import "tailwindcss";
 
-/* ── Classic satta palette: black surfaces + bright yellow ─────────────────
-   The `brand-*` tokens are kept (SiteHeader/SiteFooter reference them) but
-   pointed back at the original black/yellow look, so every `bg-black`,
-   `bg-brand-indigo`, and `satta-yellow` across the app returns to the classic
-   theme without touching a single component. */
+/* ── Brand palette: Midnight Indigo + Gold ─────────────────────────────────
+   A deliberate move away from the generic yellow/black satta template so the
+   site reads as its own brand. Deep indigo replaces black as the dark surface;
+   gold replaces yellow as the accent; a warm crimson keeps result numbers
+   popping on light cards; and the page sits on a soft near-white background.
+   The old `satta-*` tokens and Tailwind's own `black` are repointed here, so
+   every `bg-black` / `bg-brand-indigo` / `satta-yellow` re-skins at once. */
 :root {
-  --brand-indigo: #000000; /* primary dark surface (black) */
-  --brand-indigo-2: #0d0d0d; /* raised surface / hover on dark */
-  --brand-indigo-3: #222222; /* borders / dividers on dark */
-  --brand-gold: #ffdd00; /* accent */
-  --brand-gold-dark: #f5c400;
-  --brand-crimson: #d40000; /* result numbers */
-  --brand-cream: #ffdd00; /* page background */
+  --brand-indigo: #16213e; /* primary dark surface */
+  --brand-indigo-2: #1f2c4d; /* raised surface / hover on dark */
+  --brand-indigo-3: #2a3a63; /* borders / dividers on dark */
+  --brand-gold: #f5b820; /* accent */
+  --brand-gold-dark: #d99a15;
+  --brand-crimson: #e11d48; /* result numbers on light */
+  --brand-cream: #f7f8fc; /* page background */
 
-  /* Back-compat aliases — existing classes keep working. */
+  /* Back-compat aliases — existing classes keep working, new look. */
   --satta-yellow: var(--brand-gold);
   --satta-yellow-dark: var(--brand-gold-dark);
   --satta-red: var(--brand-crimson);
@@ -37,8 +39,10 @@
 
 html,
 body {
-  background: var(--satta-yellow);
-  color: #111;
+  /* Soft, faintly indigo-tinted page background — no more full-bleed yellow. */
+  background: linear-gradient(180deg, var(--brand-cream) 0%, #eef1f9 100%);
+  background-attachment: fixed;
+  color: #1a2340;
   font-family: var(--font-mukta), Arial, Helvetica, sans-serif;
 }
 
