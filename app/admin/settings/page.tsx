@@ -95,6 +95,50 @@ export default async function SettingsPage() {
           </span>
         </label>
 
+        {/* Contact banner (the "संपर्क करें" box under the results board). */}
+        <fieldset className="rounded-lg border border-zinc-200 bg-zinc-50 p-4 sm:col-span-2">
+          <legend className="px-1 text-sm font-bold text-zinc-900">Contact banner</legend>
+          <label className="mb-3 flex items-center gap-2 text-sm font-semibold">
+            <input
+              type="checkbox"
+              name="cbEnabled"
+              defaultChecked={settings.contactBanner.enabled}
+              className="h-5 w-5"
+            />
+            Show the contact banner under the results
+          </label>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label className="block">
+              <span className={label}>Heading</span>
+              <input name="cbHeading" defaultValue={settings.contactBanner.heading} className={field} />
+            </label>
+            <label className="block">
+              <span className={label}>Name</span>
+              <input name="cbName" defaultValue={settings.contactBanner.name} className={field} />
+            </label>
+            <label className="block sm:col-span-2">
+              <span className={label}>Body text</span>
+              <textarea name="cbBody" rows={2} defaultValue={settings.contactBanner.body} className={field} />
+            </label>
+            <label className="block">
+              <span className={label}>WhatsApp number (with country code)</span>
+              <input name="cbWhatsapp" defaultValue={settings.contactBanner.whatsappNumber} className={field} />
+            </label>
+            <label className="block">
+              <span className={label}>Telegram URL</span>
+              <input name="cbTelegramUrl" defaultValue={settings.contactBanner.telegramUrl} className={field} />
+            </label>
+            <label className="block sm:col-span-2">
+              <span className={label}>Note (shown under the WhatsApp button)</span>
+              <textarea name="cbNote" rows={2} defaultValue={settings.contactBanner.note} className={field} />
+            </label>
+            <label className="block sm:col-span-2">
+              <span className={label}>Telegram line (shown above the Telegram button)</span>
+              <textarea name="cbTelegramText" rows={2} defaultValue={settings.contactBanner.telegramText} className={field} />
+            </label>
+          </div>
+        </fieldset>
+
         <div className="sm:col-span-2">
           <SubmitButton className={btnPrimary} pendingLabel="Saving…">
             Save Settings

@@ -70,6 +70,31 @@ export interface SiteSettings {
    * false, a7satta is never contacted. Toggled from the admin panel.
    */
   autoSync: boolean;
+  /** Full-width contact/notice banner shown below the results board. */
+  contactBanner: ContactBanner;
+}
+
+/**
+ * The admin-editable "संपर्क करें" banner under the results board (WhatsApp +
+ * Telegram call-to-actions). All text is optional; the whole banner is hidden
+ * when `enabled` is off.
+ */
+export interface ContactBanner {
+  enabled: boolean;
+  /** Top line, e.g. "🙏 नमस्कार साथियो 🙏". */
+  heading: string;
+  /** Body line, e.g. "अपनी गेम का रिजल्ट हमारी वेबसाइट पर लगवाने के लिए संपर्क करें।". */
+  body: string;
+  /** Highlighted name, e.g. "---- ARUN BHAI ----". */
+  name: string;
+  /** WhatsApp number (digits) for the "Click to chat" button. */
+  whatsappNumber: string;
+  /** Cautionary note shown under the WhatsApp button. */
+  note: string;
+  /** Line above the Telegram button, e.g. the complaints message. */
+  telegramText: string;
+  /** Telegram URL for the "Click to connect" button. */
+  telegramUrl: string;
 }
 
 /** results[dateKey][gameId] = result number string ("45", "07", ...) */

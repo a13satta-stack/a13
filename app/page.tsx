@@ -16,6 +16,7 @@ import FeaturedBanner from "./components/FeaturedBanner";
 import NoticeMarquee from "./components/NoticeMarquee";
 import KhaiwalBoxes from "./components/KhaiwalBoxes";
 import ResultsBoard from "./components/ResultsBoard";
+import ContactBanner from "./components/ContactBanner";
 import ChartTable from "./components/ChartTable";
 
 // ISR: the page is rendered once and served from Vercel's edge CDN, not by a
@@ -81,6 +82,9 @@ export default async function Home() {
         <KhaiwalBoxes boxes={khaiwals} />
 
         <ResultsBoard games={games} today={todayResults} yesterday={yesterdayResults} />
+
+        {/* Admin-editable contact banner (Site Settings). */}
+        <ContactBanner banner={settings.contactBanner} />
 
         {/* WhatsApp CTA */}
         <section className="mx-auto max-w-5xl px-[5px] py-2">

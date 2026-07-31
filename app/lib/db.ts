@@ -172,6 +172,31 @@ function seedSettings(featuredGameId: string | null): SettingsDoc {
       "DISCLAIMER - A13 Satta is a non-commercial informational website. Please view this site at your own risk. All the information shown on this website is sponsored, and we warn you that satta matka gambling / betting may be banned in your country. We are not responsible for any issues or scams. Everything here is subject to copyright. Thank you.",
     // Off by default — the site never contacts a7satta until an admin enables it.
     autoSync: false,
+    contactBanner: {
+      enabled: true,
+      heading: "🙏 नमस्कार साथियो 🙏",
+      body: "अपनी गेम का रिजल्ट हमारी वेबसाइट पर लगवाने के लिए संपर्क करें।",
+      name: "---- ARUN BHAI ----",
+      whatsappNumber: "911234567890",
+      note: "इस नंबर पर लीक गेम नही मिलता, गेम लेने वाले भाई कॉल या मैसेज न करें।",
+      telegramText:
+        "किसी भी भाई को किसी भी तरह की कोई शिकायत या परेशानी हो तो हमसे telegram पर संपर्क करे।",
+      telegramUrl: "https://t.me/",
+    },
+  };
+}
+
+/** Defaults for a contact banner missing from an older settings document. */
+function defaultContactBanner(): SiteSettings["contactBanner"] {
+  return {
+    enabled: false,
+    heading: "",
+    body: "",
+    name: "",
+    whatsappNumber: "",
+    note: "",
+    telegramText: "",
+    telegramUrl: "",
   };
 }
 
@@ -294,8 +319,12 @@ export async function getSettings(): Promise<SiteSettings> {
   if (!d) return seedSettings(null);
   const { _id, ...rest } = d;
   void _id;
-  // Default for settings docs written before autoSync existed.
-  return { ...rest, autoSync: rest.autoSync ?? false };
+  // Defaults for settings docs written before these fields existed.
+  return {
+    ...rest,
+    autoSync: rest.autoSync ?? false,
+    contactBanner: rest.contactBanner ?? defaultContactBanner(),
+  };
 }
 
 export async function getPosts(): Promise<BlogPost[]> {

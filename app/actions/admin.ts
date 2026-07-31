@@ -114,16 +114,28 @@ export async function saveSettingsAction(formData: FormData): Promise<void> {
     .map((s) => s.trim())
     .filter(Boolean);
 
+  const s = (name: string) => String(formData.get(name) ?? "").trim();
+
   await saveSettings({
-    siteName: String(formData.get("siteName") ?? "").trim() || "A13SATTA  OFFICIAL",
-    tagline: String(formData.get("tagline") ?? "").trim(),
-    featuredGameId: String(formData.get("featuredGameId") ?? "").trim() || null,
-    telegramUrl: String(formData.get("telegramUrl") ?? "").trim(),
-    whatsappNumber: String(formData.get("whatsappNumber") ?? "").trim(),
-    contactEmail: String(formData.get("contactEmail") ?? "").trim(),
-    disclaimer: String(formData.get("disclaimer") ?? "").trim(),
+    siteName: s("siteName") || "A13SATTA  OFFICIAL",
+    tagline: s("tagline"),
+    featuredGameId: s("featuredGameId") || null,
+    telegramUrl: s("telegramUrl"),
+    whatsappNumber: s("whatsappNumber"),
+    contactEmail: s("contactEmail"),
+    disclaimer: s("disclaimer"),
     autoSync: formData.get("autoSync") === "on",
     notices,
+    contactBanner: {
+      enabled: formData.get("cbEnabled") === "on",
+      heading: s("cbHeading"),
+      body: s("cbBody"),
+      name: s("cbName"),
+      whatsappNumber: s("cbWhatsapp"),
+      note: s("cbNote"),
+      telegramText: s("cbTelegramText"),
+      telegramUrl: s("cbTelegramUrl"),
+    },
   });
   revalidateSite();
 }
