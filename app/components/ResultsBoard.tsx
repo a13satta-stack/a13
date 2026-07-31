@@ -53,16 +53,16 @@ function GameRow({
         href={`/game/${slugify(g.name)}`}
         className={`${CELL_BORDER} group bg-satta-yellow px-2 py-2 text-center`}
       >
-        <div className="text-[20px] font-bold uppercase leading-tight text-[#000000] group-hover:underline">
+        <div className="text-[20px] font-bold uppercase leading-tight text-brand-indigo group-hover:underline">
           {g.name}
         </div>
-        <div className="text-[18px] font-bold leading-tight text-[#000000]">{g.time}</div>
+        <div className="text-[15px] font-semibold leading-tight text-brand-indigo/70">{g.time}</div>
       </Link>
 
       <div
-        className={`${CELL_BORDER} flex items-center justify-center bg-white px-2 py-2 text-lg font-bold text-[#1717b5]`}
+        className={`${CELL_BORDER} flex items-center justify-center bg-white px-2 py-2 text-lg font-bold text-brand-indigo/70`}
       >
-        {prev ?? <span className="text-gray-500">--</span>}
+        {prev ?? <span className="text-gray-400">--</span>}
       </div>
 
       <div className="flex items-center justify-center bg-white px-2 py-2">
@@ -86,13 +86,13 @@ function BoardTable({
   yesterday: Record<string, string>;
 }) {
   return (
-    <div className="overflow-hidden rounded border border-black">
+    <div className="overflow-hidden rounded-xl border border-brand-indigo/15 bg-white shadow-md shadow-brand-indigo/10">
       <div
-        className={`grid ${COLS} bg-black text-center text-[11px] font-bold text-white`}
+        className={`grid ${COLS} bg-brand-indigo text-center text-[11px] font-bold tracking-wide text-brand-gold`}
       >
-        <div className={`${CELL_BORDER} border-white/25 px-2 py-1.5`}>सट्टा का नाम</div>
-        <div className={`${CELL_BORDER} border-white/25 px-2 py-1.5`}>कल आया था</div>
-        <div className="px-2 py-1.5">आज का रिजल्ट</div>
+        <div className={`${CELL_BORDER} border-white/15 px-2 py-2`}>सट्टा का नाम</div>
+        <div className={`${CELL_BORDER} border-white/15 px-2 py-2`}>कल आया था</div>
+        <div className="px-2 py-2">आज का रिजल्ट</div>
       </div>
 
       {games?.reverse()?.map((g) => (
@@ -122,8 +122,8 @@ export default function ResultsBoard({
 
   return (
     <section className="mx-auto max-w-5xl px-[5px] py-3">
-      <div className="mb-2 overflow-hidden rounded-lg border-2 border-black">
-        <div className="bg-black py-2 text-center text-lg font-bold text-satta-yellow">
+      <div className="mb-3 overflow-hidden rounded-xl shadow-md shadow-brand-indigo/10">
+        <div className="bg-gradient-to-r from-brand-indigo via-brand-indigo-2 to-brand-indigo py-2.5 text-center text-lg font-extrabold tracking-wide text-brand-gold">
           आज का रिजल्ट — Today&apos;s Result
         </div>
       </div>

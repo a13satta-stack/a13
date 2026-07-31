@@ -45,7 +45,7 @@ export default function SiteHeader({
     `${siteName} official website welcomes you. Get informed about satta king's history, rules, and today's fastest results right here.`;
 
   return (
-    <header className="bg-black text-satta-yellow">
+    <header className="border-b-2 border-brand-gold/40 bg-gradient-to-b from-brand-indigo-2 to-brand-indigo text-brand-gold shadow-lg shadow-brand-indigo/20">
       <nav className="mx-auto grid max-w-6xl grid-cols-2 gap-4 px-[5px] py-3 sm:grid-cols-4 sm:gap-4">
         <NavLink href="/" active={pathname === "/"}>
           {siteName} 🏠
@@ -74,7 +74,7 @@ export default function SiteHeader({
         </div>
       </div>
 
-      <div className="bg-black pb-2 text-center text-xs text-satta-yellow">
+      <div className="pb-2 text-center text-xs font-semibold text-brand-gold/90">
         <LiveClock />
       </div>
     </header>

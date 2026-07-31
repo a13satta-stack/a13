@@ -93,19 +93,17 @@ export default function FeaturedBanner({
 }) {
   return (
     <section>
-      {/* Site-name band: black rules top and bottom frame the yellow strip.
-          The title blinks via opacity/visibility, so the band keeps its height
-          through the hidden half and nothing below it shifts. */}
-      <div className="border-y-4 border-black bg-satta-yellow px-3 py-5 text-center">
-        <h1 className="animate-blink text-3xl leading-none font-extrabold tracking-wide text-black uppercase sm:text-5xl"
-        // style={{fontSize:"40px"}}
-        >
+      {/* Site-name band: a gold strip framed by indigo rules. The title blinks
+          via opacity/visibility, so the band keeps its height through the hidden
+          half and nothing below it shifts. */}
+      <div className="border-y-4 border-brand-indigo bg-gradient-to-b from-brand-gold to-brand-gold-dark px-3 py-5 text-center">
+        <h1 className="animate-blink text-3xl leading-none font-extrabold tracking-wide text-brand-indigo uppercase sm:text-5xl">
           {siteName}
         </h1>
       </div>
 
-      <div className="bg-black px-3 py-4 text-center">
-        {tagline && <p className="text-lg font-bold text-white sm:text-xl">{tagline}</p>}
+      <div className="bg-gradient-to-b from-brand-indigo-2 to-brand-indigo px-3 py-5 text-center">
+        {tagline && <p className="text-lg font-bold text-brand-gold sm:text-xl">{tagline}</p>}
         <div className="mt-3 space-y-3">
           {liveBoard.map(({ game, result }) => (
             <LiveGame key={game.id} game={game} result={result} />

@@ -1,24 +1,73 @@
 @import "tailwindcss";
 
+/* ── Brand palette: Midnight Indigo + Gold ─────────────────────────────────
+   A deliberate move away from the generic yellow/black satta template so the
+   site reads as its own brand. Deep indigo replaces black as the dark surface;
+   gold replaces yellow as the accent; a warm crimson keeps result numbers
+   popping on light cards. The old `satta-*` tokens are remapped to the new
+   palette, and `--color-black` itself is repointed to indigo, so every existing
+   `bg-black` / `text-black` / `border-black` across the app re-skins at once. */
 :root {
-  --satta-yellow: #ffdd00;
-  --satta-yellow-dark: #f5c400;
-  --satta-red: #d40000;
+  --brand-indigo: #16213e; /* primary dark surface */
+  --brand-indigo-2: #1f2c4d; /* raised surface / hover on dark */
+  --brand-indigo-3: #2a3a63; /* borders / dividers on dark */
+  --brand-gold: #f5b820; /* accent */
+  --brand-gold-dark: #d99a15;
+  --brand-crimson: #e11d48; /* result numbers on light */
+  --brand-cream: #f7f8fc; /* page background */
+
+  /* Back-compat aliases — existing classes keep working, new look. */
+  --satta-yellow: var(--brand-gold);
+  --satta-yellow-dark: var(--brand-gold-dark);
+  --satta-red: var(--brand-crimson);
 }
 
 @theme inline {
-  --color-satta-yellow: var(--satta-yellow);
-  --color-satta-yellow-dark: var(--satta-yellow-dark);
-  --color-satta-red: var(--satta-red);
+  --color-satta-yellow: var(--brand-gold);
+  --color-satta-yellow-dark: var(--brand-gold-dark);
+  --color-satta-red: var(--brand-crimson);
+  /* Brand tokens for new markup. */
+  --color-brand-indigo: var(--brand-indigo);
+  --color-brand-indigo-2: var(--brand-indigo-2);
+  --color-brand-gold: var(--brand-gold);
+  /* Repoint Tailwind's black so the whole app's black surfaces become indigo
+     without touching every component. */
+  --color-black: var(--brand-indigo);
   --font-sans: var(--font-mukta);
   --font-mono: var(--font-geist-mono);
 }
 
 html,
 body {
-  background: var(--satta-yellow);
-  color: #111;
+  /* Soft, faintly indigo-tinted page background — no more full-bleed yellow. */
+  background: linear-gradient(180deg, var(--brand-cream) 0%, #eef1f9 100%);
+  background-attachment: fixed;
+  color: #1a2340;
   font-family: var(--font-mukta), Arial, Helvetica, sans-serif;
+}
+
+/* Brand-tinted text selection. */
+::selection {
+  background: var(--brand-gold);
+  color: var(--brand-indigo);
+}
+
+/* Gentle default transitions so hover/focus states feel polished, without
+   having to add `transition` to every element. */
+@layer base {
+  a,
+  button,
+  [role="button"],
+  input,
+  select,
+  textarea {
+    transition:
+      background-color 0.15s ease,
+      border-color 0.15s ease,
+      color 0.15s ease,
+      box-shadow 0.15s ease,
+      transform 0.15s ease;
+  }
 }
 
 /* Tailwind v4's preflight no longer gives buttons a pointer cursor the way v3
