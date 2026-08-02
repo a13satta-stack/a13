@@ -31,19 +31,27 @@ export function nowMinutesInSiteTz(now: Date, tz = process.env.SITE_TZ ?? "Asia/
 
 /** Minutes before a game's result time that the board starts showing it. */
 export const LEAD_MINUTES = 30;
+/** Minutes a game stays on the board after its result time (recent result). */
+export const KEEP_MINUTES = 120;
+/** Always keep at least this many of the most recent results on the board. */
+export const MIN_RECENT = 2;
+/** Safety cap on how many games the board shows at once. */
+export const MAX_BOARD = 6;
 
 /**
- * Pick the ONE game the black board shows, by the clock:
+ * Pick the games the black board shows, by the clock:
  *
- *  - From `LEAD_MINUTES` before a game's result time until the next game's
- *    time, that game is "being awaited" → show its name with WAIT (until its
- *    number lands, when it becomes the last result).
- *  - Otherwise show the most recently declared result — the last number that
- *    actually came — so between declarations the board holds the last result.
- *  - Before the day's first declaration, fall back to yesterday's last result.
+ *  - Every game whose window contains now — from `LEAD_MINUTES` before its
+ *    result time until `KEEP_MINUTES` after it — appears, showing its number
+ *    once declared or WAIT while awaited. So a fresh result stays up for a
+ *    couple of hours and the next game(s) join with WAIT half an hour early.
+ *  - On top of that, the last `MIN_RECENT` results that actually came today are
+ *    always kept on the board, so the two most recent numbers stay visible even
+ *    during a quiet gap between games.
+ *  - Before the day's first result, it falls back to yesterday's last couple of
+ *    results so the board is never empty.
  *
- * Returns an array so the caller can render it with a simple map; it holds one
- * entry (or none, if no game has a usable time).
+ * Entries come back in schedule (time) order.
  */
 export function pickLiveBoard(
   games: Game[],
@@ -57,30 +65,23 @@ export function pickLiveBoard(
     .sort((a, b) => a.t - b.t);
   if (timed.length === 0) return [];
 
-  // The game currently being awaited: earliest undeclared game whose window is
-  // open — from LEAD_MINUTES before its time until the next game's time (after
-  // which an undeclared game is treated as missed and skipped).
-  for (let i = 0; i < timed.length; i++) {
-    const { g, t } = timed[i];
-    if (today[g.id]) continue;
-    const start = t - LEAD_MINUTES;
-    const end = i + 1 < timed.length ? timed[i + 1].t : t + 120;
-    if (nowMin >= start && nowMin < end) return [{ game: g, result: undefined }];
+  // Games currently in their [t - LEAD, t + KEEP] window (recent + upcoming).
+  const inWindow = timed.filter(
+    ({ t }) => nowMin >= t - LEAD_MINUTES && nowMin <= t + KEEP_MINUTES
+  );
+  // The most recent results that came today (whatever the hour), last MIN_RECENT.
+  const recent = timed.filter((x) => today[x.g.id] && x.t <= nowMin).slice(-MIN_RECENT);
+
+  const ids = new Set([...inWindow, ...recent].map((x) => x.g.id));
+  if (ids.size > 0) {
+    let chosen = timed.filter((x) => ids.has(x.g.id));
+    // If it overflows, keep the ones nearest "now" (drop the oldest).
+    if (chosen.length > MAX_BOARD) chosen = chosen.slice(chosen.length - MAX_BOARD);
+    return chosen.map(({ g }) => ({ game: g, result: today[g.id] }));
   }
 
-  // Nobody awaited → the most recent declared result whose time has passed.
-  const declaredPast = timed.filter((x) => today[x.g.id] && x.t <= nowMin);
-  if (declaredPast.length) {
-    const g = declaredPast[declaredPast.length - 1].g;
-    return [{ game: g, result: today[g.id] }];
-  }
-  // Any result declared today at all (e.g. an early one).
-  const declaredAny = timed.filter((x) => today[x.g.id]);
-  if (declaredAny.length) {
-    const g = declaredAny[declaredAny.length - 1].g;
-    return [{ game: g, result: today[g.id] }];
-  }
-  // Nothing today yet — hold yesterday's last result.
-  const last = timed[timed.length - 1].g;
-  return [{ game: last, result: yesterday[last.id] }];
+  // Nothing today yet — hold yesterday's last couple of results.
+  const ydayDeclared = timed.filter((x) => yesterday[x.g.id]);
+  const fallback = (ydayDeclared.length ? ydayDeclared : timed).slice(-MIN_RECENT);
+  return fallback.map(({ g }) => ({ game: g, result: today[g.id] ?? yesterday[g.id] }));
 }
