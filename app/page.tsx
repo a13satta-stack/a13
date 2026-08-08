@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { pickLiveBoard, nowMinutesInSiteTz } from "./lib/board";
+import { pickLiveBoard, pickFeatured, nowMinutesInSiteTz } from "./lib/board";
 import {
   getActiveGamesSorted,
   getSettings,
@@ -52,11 +52,18 @@ export default async function Home() {
 
   const today = dateKey();
   const todayResults = results[today] ?? {};
-  const featured = games.find((g) => g.id === settings.featuredGameId) ?? games[0] ?? null;
   // The black board shows ONE game: the last result until the next game's time
   // nears, then that next game with WAIT from 30 minutes before it.
   const nowMin = nowMinutesInSiteTz(now);
   const liveBoard = pickLiveBoard(games, todayResults, yesterdayResults, nowMin);
+  // The yellow band follows the clock too: the freshest result for a couple of
+  // hours, then the game whose result is next due. The game pinned in Site
+  // Settings is only a fallback, so the band never stays stuck on one game.
+  const featured =
+    pickFeatured(games, todayResults, nowMin) ??
+    games.find((g) => g.id === settings.featuredGameId) ??
+    games[0] ??
+    null;
 
   return (
     <>

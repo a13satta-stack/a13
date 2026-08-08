@@ -34,7 +34,7 @@ export default async function SettingsPage() {
         </label>
 
         <label className="block">
-          <span className={label}>Featured game (big banner)</span>
+          <span className={label}>Featured game (fallback only)</span>
           <select name="featuredGameId" defaultValue={settings.featuredGameId ?? ""} className={field}>
             <option value="">— none —</option>
             {games.map((g) => (
@@ -43,6 +43,11 @@ export default async function SettingsPage() {
               </option>
             ))}
           </select>
+          <span className="mt-1 block text-xs text-gray-500">
+            The yellow banner now follows the clock on its own: a fresh result stays up for 2
+            hours, then it moves to the game whose result is next due. This choice is only used
+            if no game has a valid time.
+          </span>
         </label>
         <label className="block">
           <span className={label}>Contact email</span>

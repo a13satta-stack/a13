@@ -85,3 +85,42 @@ export function pickLiveBoard(
   const fallback = (ydayDeclared.length ? ydayDeclared : timed).slice(-MIN_RECENT);
   return fallback.map(({ g }) => ({ game: g, result: today[g.id] ?? yesterday[g.id] }));
 }
+
+/**
+ * Pick the game for the yellow band under the board — the one that matters
+ * *right now*, by the clock, instead of a single game pinned in settings:
+ *
+ *  - The freshest result of the day stays up for `KEEP_MINUTES` (2 hours)
+ *    after its result time.
+ *  - Once that window is over, the band moves on to the game whose result is
+ *    still awaited (the next one due, or one running late).
+ *  - Nothing awaited left today → keep the day's last declared result.
+ *
+ * Returns null only when there is no game with a usable time; the caller then
+ * falls back to the admin's configured featured game.
+ */
+export function pickFeatured(
+  games: Game[],
+  today: Record<string, string>,
+  nowMin: number
+): Game | null {
+  const timed = games
+    .map((g) => ({ g, t: parseTimeToMinutes(g.time) }))
+    .filter((x) => x.t >= 0)
+    .sort((a, b) => a.t - b.t);
+  if (timed.length === 0) return null;
+
+  const declared = timed.filter((x) => today[x.g.id] && x.t <= nowMin);
+  const last = declared[declared.length - 1];
+
+  // A result that just came in owns the band for the next couple of hours.
+  if (last && nowMin - last.t <= KEEP_MINUTES) return last.g;
+
+  // Otherwise show the game we're waiting on — the earliest one still without a
+  // result today that isn't long overdue (a skipped game must not stick).
+  const awaiting = timed.find((x) => !today[x.g.id] && nowMin <= x.t + KEEP_MINUTES);
+  if (awaiting) return awaiting.g;
+
+  // Late in the day with everything declared: hold the last result.
+  return last?.g ?? timed[timed.length - 1].g;
+}
