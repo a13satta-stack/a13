@@ -12,7 +12,7 @@ export const revalidate = 60;
 export async function generateMetadata(): Promise<Metadata> {
   const year = new Date().getFullYear();
   const title = `Satta King Chart ${year} — All Games Record Chart`;
-  const description = `View the full satta king record chart ${year} for sadar bazar, shri ganesh, delhi bazar, gali and disawar. Pick a game to open its complete yearly chart.`;
+  const description = `View the full satta king record chart ${year} for mayapuri , shri ganesh, delhi bazar, gali and disawar. Pick a game to open its complete yearly chart.`;
   return {
     title,
     description,

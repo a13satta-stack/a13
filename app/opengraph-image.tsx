@@ -60,7 +60,7 @@ export default function OpengraphImage() {
             opacity: 0.75,
           }}
         >
-          Sadar Bazar · Shri Ganesh · Delhi Bazar · Gali · Disawar
+          Mayapuri · Shri Ganesh · Delhi Bazar · Gali · Disawar
         </div>
       </div>
     ),

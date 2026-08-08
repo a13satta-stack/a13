@@ -16,7 +16,7 @@ const PASSWORD = process.env.PASSWORD || "admin123";
 
 // [name, "HH:MM" 24h, yesterday, today]  (-1 = not declared)
 const TABLE1 = [
-  ["sadar bazar", "13:40", 1, -1],
+  
   ["gwalior", "14:40", 92, -1],
   ["delhi bazar", "15:15", 18, -1],
   ["delhi matka", "15:40", 48, -1],
